@@ -84,7 +84,7 @@ This creates the project skeleton and clones the subagents extension into `.pi/`
 
 4. Create the project directory structure:
    ```bash
-   mkdir -p CAD WIP Knowledge Document kicad_lib/{Symbol/Symbol,Footprint/Footprint.pretty,Step} Datasheet
+   mkdir -p Design WIP Knowledge Document kicad_lib/{Symbol/Symbol,Footprint/Footprint.pretty,Step} Datasheet
    ```
 
 5. Run pi with `--system .pi/SYSTEM.md` (or however your pi configuration picks up `SYSTEM.md`).
@@ -113,7 +113,7 @@ Agents never delete files — they move unwanted files to `<dir>/.trash/` instea
 
 ```
 Project/
-├── CAD/                    # KiCad project files (schematics, PCB)
+├── Design/                # KiCad project files (schematics, PCB)
 ├── Document/               # Design documents (Myst format)
 ├── Knowledge/              # Product datasheets in Markdown
 │   └── IC-TPS62870-DS/    # One folder per document

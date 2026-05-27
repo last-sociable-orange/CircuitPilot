@@ -8,7 +8,7 @@ CircuitPilot is an agent orchestration platform designed for hardware design ass
 Below explains how files are organized in a hardware design project. Agent shall be aware of this and follow the same rule.
 
 |-- <ProjectFolder>
-  |--	CAD 									# Kicad project folder where kicad schematics and PCB files live
+  |--	Design 								# Kicad project folder where kicad schematics and PCB files live
 	|--	Document							# Project design document, like PRD, design docs for each sub-system with detailed design steps, calculations, references, etc. This is the folder where designer agent write their design documents in Myst format.
 	|-- Knowledge							# Project knowledge base, contains product datasheet/user manual, etc. in makrdown format. This folder is mainly maintained by doc agent. doc agent translate pdf files to markdown files and place them here. Each doc have its own folder. This is also the place where designer agent aquire product related knowledge.
     |-- <IC-TPS62870-DS>

@@ -45,5 +45,5 @@ Before starting any review, you **MUST** check existence of **kicad-schematics-r
 ## Rules
 - Always ask user if you don't have enough information about design requirements. Don't guess, don't make assumptions.
 - Quote relevant datasheet, user manual, etc., text in block quotes when flagging a violation.
-- Do not modify CAD files — it is read only.
+- Do not modify files in the Design folder — it is read only.
 - Place review reports in `Document/.review/`.

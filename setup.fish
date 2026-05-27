@@ -1,7 +1,7 @@
 #!/usr/bin/env fish
 
 echo "Creating project directories..."
-mkdir -p CAD WIP Knowledge Document .pi/agents .pi/extensions
+mkdir -p Design WIP Knowledge Document .pi/agents .pi/extensions
 
 echo "Cloning Kicad library repositories..."
 git clone git@github.com:last-sociable-orange/kicad_lib_gen.git
