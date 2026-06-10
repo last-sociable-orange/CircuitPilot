@@ -1,15 +1,20 @@
 # CircuitPilot — Agent Team for Hardware Design
 
-**CircuitPilot** is a [pi](https://pi.dev/) extension that enables multi-agent workflows for hardware/PCB design. A lead agent orchestrates a team of specialized sub-agents — each with their own system prompt, model, and tool permissions — to handle document processing, library management, and circuit design.
+**CircuitPilot** is a [pi](https://pi.dev/) extension that enables multi-agent workflows for hardware/PCB design. A lead agent orchestrates a team of specialized sub-agents — each with their own system prompt, model, and tool permissions — to handle document processing, library management, circuit design, and image processing.
 
 ## Architecture
 
 ```
 User → Lead Agent (AGENTS.md)
          │
-         ├── subagent "doc"       → Process datasheets, convert PDF → Markdown
-         ├── subagent "lib"       → Manage KiCad symbols, footprints, 3D models
-         └── subagent "designer"  → Research products, write design documents
+         ├── subagent "worker"    → Datasheet processing + library management (consolidated)
+         ├── subagent "doc"       → Process datasheets, convert PDF → Markdown (legacy)
+         ├── subagent "lib"       → Manage KiCad symbols, footprints, 3D models (legacy)
+         ├── subagent "designer"  → Research products, write design documents
+         ├── subagent "reviewer"  → Review schematics against design requirements
+         └── subagent "image"     → OCR equations from images, generate diagrams
+                                      ↑
+                                      Any agent can delegate image tasks to it
 ```
 
 The lead agent delegates tasks to sub-agents via the `subagent` tool, which spawns isolated `pi` processes. Each sub-agent has its own context window, so large tasks don't pollute the main conversation.
@@ -22,9 +27,12 @@ pi-extensions/
 │   ├── AGENTS.md                         # Lead agent system prompt
 │   ├── SYSTEM.md                         # File conventions, naming rules, workflow stages
 │   ├── agents/                           # Sub-agent definitions
-│   │   ├── doc.md                        # Document agent (PDF → Markdown, OCR)
+│   │   ├── doc.md                        # Document agent (PDF → Markdown, OCR) [legacy]
+│   │   ├── lib.md                        # Library agent (symbols, footprints) [legacy]
+│   │   ├── worker.md                     # Consolidated doc+lib agent (uses kicad-worker skill)
+│   │   ├── image.md                      # Image processing agent (OCR, diagrams)
 │   │   ├── designer.md                   # Hardware designer (research, design docs)
-│   │   └── lib.md                        # Library agent (symbols, footprints, 3D steps)
+│   │   └── reviewer.md                   # Schematic reviewer
 │   └── extensions/
 │       └── subagents/
 │           ├── index.ts                  # Subagent tool (single, parallel, chain modes)
@@ -37,11 +45,30 @@ pi-extensions/
 
 | Agent | Model | Description |
 |-------|-------|-------------|
-| **doc** | `opencode-go/qwen3.6-plus:medium` | Extracts PDF datasheets, converts to Markdown via `pdf-to-markdown`, OCRs equations, organizes project documents |
-| **lib** | `deepseek/deepseek-v4-flash:high` | Processes downloaded KiCad libraries — renames, cleans, and quality-checks symbols, footprints, and 3D step files |
+| **worker** | `opencode-go/qwen3.6-plus:medium` | Consolidated agent for datasheet processing (PDF→Markdown) and KiCad library management. Uses the `kicad-worker` skill. |
+| **doc** | `opencode-go/qwen3.6-plus:medium` | [Legacy] Extracts PDF datasheets, converts to Markdown via `pdf-to-markdown`, OCRs equations, organizes project documents |
+| **lib** | `deepseek/deepseek-v4-flash:high` | [Legacy] Processes downloaded KiCad libraries — renames, cleans, and quality-checks symbols, footprints, and 3D step files |
 | **designer** | `deepseek/deepseek-v4-pro:high` | Researches product datasheets, performs circuit design calculations, writes design documents with traceable references |
+| **reviewer** | `deepseek/deepseek-v4-flash:xhigh` | Audits KiCad schematics against design requirements and datasheets, generates review reports with diagrams |
+| **image** | `opencode/mimo-v2.5-free` | Processes image inputs: OCR equations to LaTeX, generates technical diagrams (block diagrams, power trees) via `drawio-skill`, reads and analyzes images. Acts as a service agent for other agents. |
 
 Each agent is defined as a Markdown file with YAML frontmatter for metadata (name, model, tools, description) and a body containing the system prompt.
+
+## Image Agent Handover
+
+The `image` agent is a specialized service agent. Any other agent can delegate image tasks to it:
+
+```
+Agent X → subagent({agent: "image", task: "OCR equation from: path/to/image.png"})
+         → Image agent processes the image
+         → Returns LaTeX / diagram path / analysis text
+         → Agent X continues with the result
+```
+
+Example use cases:
+- **doc** or **worker** agents OCR equations from datasheet images
+- **designer** or **reviewer** agents create block diagrams and power trees
+- Any agent needs to analyze or describe an image
 
 ## Subagent Tool Modes
 
@@ -145,7 +172,7 @@ Product types follow reference designator conventions: `R`, `C`, `IC`, `D`, `L`,
 ## Dependencies
 
 - **pi** — The coding agent harness
-- **Required skills** (for doc agent): `pdf-to-markdown`, `pdf-utils`
+- **Required skills**: `pdf-to-markdown`, `pdf-utils`, `kicad-worker`, `image-to-equation`, `drawio-skill`
 - **KiCad** (for lib agent) — Symbol and footprint tools
 
 ## License

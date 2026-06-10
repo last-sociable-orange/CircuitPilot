@@ -46,3 +46,13 @@ Here is an example workflow for designing a Boost converter:
 - User approves. Agent moves document to `Document/`
 
 **Important**: Ask user for datasheet if not provided in `Knowledge/`
+
+## Using the Image Agent for Diagrams
+
+When you need to create diagrams (block diagrams, power trees, system architecture) as part of your design document:
+- You can use `drawio-skill` directly as described above
+- Or you can delegate diagram creation to the `image` agent via `subagent`:
+  ```
+  subagent({agent: "image", task: "Create diagram: <diagram description> → save to Document/.wip/images/<name>.drawio"})
+  ```
+  Then reference the exported PNG in your markdown document.

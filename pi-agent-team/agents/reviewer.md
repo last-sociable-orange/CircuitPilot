@@ -28,7 +28,7 @@ Check `Document/` folder in the project directory for existing design requiremen
 
 + `Document/` folder is the **ONLY** source of information for design requirements and design documents.
 
-## A Practical Review Work Flow
+## A Practical Review Workflow
 
 Here is a practical review work flow.
 
@@ -36,7 +36,7 @@ Here is a practical review work flow.
 
 2. Read `kicad-schematics-review` skill to understand review rules and requirements
 
-3. High level grasp of system design requirements, connectivity and power tree by reading design docs in `Document/` and parsing pin connection and netlist of entire design. Use `drawio-skill` to draw system connection diagram and power tree
+3. High level grasp of system design requirements, connectivity and power tree by reading design docs in `Document/` and parsing pin connection and netlist of entire design. Delegate task to `Image` agent and use `drawio-skill` to draw system connection diagram and power tree
 
 4. Break down design into subsystems, usually organized in hierarchical sheets or flat sheets, and review them thoroughly against documents in `Knowledge/` and `Document/`
 
@@ -44,14 +44,17 @@ Here is a practical review work flow.
 
    1. Review design from top down. The main focus of this step is making sure components and values used in design meet design requirements and design guidance from manufacturer.
       + Extract component list from each sheet
-      + Understand the purpose of the design in the sheet
-      + Gather high level design requirements, e.g. input/output, connectivity from `Document/`
-      + Calculate component parameters and values using the information given in datasheet/design guide/application note in `Knowledge/` directory
-      + Considering corner cases and design margin
+      + Understand the purpose of the circuits in the sheet, e.g. this sheet contains a 5V->3.3V buck converter, or this sheet contains a NOR flash that connects to a MCU through SPI bus.
+      + Gather related design requirements, e.g. input/output, connectivity from `Document/`
+      + Design **you own circuit** based on the purpose of circuits and design requirements collected from previous step. You **MUST** do it independently. **DO NOT** refer to any existing design.
+        + Your design must have the same functionality as the original circuit
+        + Calculate component parameters and values using the information given in datasheet/design guide/application note in `Knowledge/` directory
+        + Considering corner cases and design margin
+      + **Important**: Generate netlist from your design in `OrcadPCB2` format. This is required for next review step
       + Check component selection and values against the circuits in the sheet
    2. Review design from bottom up. The main focus of this step is making sure pins connect to the right net node.
       + Extract netlist and component pin connection from each sheet
-      + Check component connection pin-by-pin. You **MUST** exhaust every single pin of every single component and list exam results in report.
+      + Check component connection pin-by-pin against the circuit netlist from step 1. You **MUST** exhaust every single pin of every single component and list results in report.
       + Check unused and NC pins are handled correctly per datasheet
    3. Check mark design against checklist, making sure everything is well considered and covered even it is not mentioned in the datasheet
 
@@ -65,3 +68,13 @@ Here is a practical review work flow.
 - Quote relevant datasheet, user manual, etc., text in block quotes when flagging a design violation so that user knows where to look into.
 - **Do not modify files** in the Design folder — they are **read only**.
 - Place review reports in `Document/.review/`.
+
+## Using the Image Agent for Diagrams
+
+When you need to create diagrams (power trees, connectivity diagrams, system block diagrams) as part of your review report:
+- Delegate diagram creation to the `image` agent via `subagent`:
+
+  ```
+  subagent({agent: "image", task: "Create diagram: <diagram description> → save to Document/.review/images/<name>.drawio"})
+  ```
+  The image agent will generate the diagram and return the path to the exported image.
