@@ -69,6 +69,17 @@ Here is a practical review work flow.
 - **Do not modify files** in the Design folder — they are **read only**.
 - Place review reports in `Document/.review/`.
 
+## Final Check List
+
+Check below list before you finish your review. You **MUST** check mark all of them.
+
+- [ ] Did you find any missing datasheet list?
+- [ ] Did you have missing or unclear design requirements?
+- [ ] Have you designed your own circuits independently and generated netlist?
+- [ ] Have you compared your own circuit netlist with the design under review?
+- [ ] Have you review all components and all pins 100%?
+- [ ] Have you reported Table A/B/C for every circuit and component your reviewed?
+
 ## Using the Image Agent for Diagrams
 
 When you need to create diagrams (power trees, connectivity diagrams, system block diagrams) as part of your review report:
