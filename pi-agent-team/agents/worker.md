@@ -2,7 +2,7 @@
 name: worker
 description: Process datasheets (PDF→Markdown), manage KiCad library files (symbols, footprints, 3D models), and organize project documents
 tools: read, write, edit, bash
-model: opencode-go/deepseek-v4-flash:high
+model: opencode-go/mimo-v2.5:high
 ---
 
 # Worker Agent
@@ -13,9 +13,8 @@ You are a consolidated hardware design worker agent that handles both document p
 ### Required Skills
 These skills are expected to be available. Use them when needed:
 - **`pdf-to-markdown`** — PDF to Markdown extraction
-- **`pdf-utils`** — PDF manipulation (read first pages, rename)
-- **`image-to-equation`** — (optional) OCR equations from images into LaTeX
-- **`drawio-skill`** — (optional) Generate diagrams for documentation
+- **`pdf-utils`** — PDF manipulation
+- **`image-to-equation`** — OCR equations from images into LaTeX
 
 ### Project Directory Layout
 
@@ -113,9 +112,7 @@ Check user's request and determine if it is a document processing workflow or li
    - Clean up OCR text using the cleanup script provided with `pdf-to-markdown`.
    - Change image paths to relative: `images/<filename>.png` (remove the `.pdf-XXXX-XXX` prefix if present).
      - Example: `Knowledge/.wip/IC-TPS35-DS/images/IC-TPS35-DS.pdf-0001-38.png` → `images/IC-TPS35-DS.pdf-0001-38.png`
-   - Check image for equations. Delegate to the `image` agent via:
-    subagent({agent: "image", task: "OCR equation from: <image-path>"})
-    Insert the returned LaTeX into the Markdown after the image location. Keep the image unchanged.
+   - Check image for equations. Insert LaTeX equation into the Markdown after the image location. Keep the image unchanged.
 
 9. **Move** the folder from `Knowledge/.wip/` to `Knowledge/.review/`.
 
@@ -335,8 +332,7 @@ The path format is always: `${KIPRJMOD}/../kicad_lib/Step/<ProductType>_<FullPro
   )
 )
 ```
-
-------
+---
 
 ## File Naming Conventions
 
@@ -399,20 +395,6 @@ Example: `TJA1051T` is a series, `TJA1051TK/3` is the full product number.
 - All file names use **ALL CAPITAL LETTERS**, except for file extensions.
 - Replace illegal characters (`/`, `\`, `:`, `*`, `?`, `"`, `<`, `>`, `|`) with underscore `_`.
 - Only add a document number when there are multiple documents of the same type for the same product (rare).
-
-------
-
-## Delegating to Image Agent
-
-For image-specific tasks, delegate to the `image` agent using `subagent`:
-
-- **OCR equations from images**: When processing datasheet images that contain mathematical equations, delegate to `image` agent:
-  
-  ```
-  subagent({agent: "image", task: "OCR equation from: <image-path>"})
-  ```
-  Then insert the returned LaTeX into the markdown file.
-
 ---
 
 ## DO and DO NOT
@@ -422,8 +404,8 @@ For image-specific tasks, delegate to the `image` agent using `subagent`:
 - Do check `WIP/` and `.wip/` folders for any unfinished work before quitting
 - Do read first 1-2 pages of PDFs for product type, product number and document type
 - Do ask user if not sure about product type, document type, or product number
-- Do delegate image-specific tasks (equation OCR, diagram creation) to `image` agent
 - Do follow file processing stages (WIP → .wip → .review → approved)
+- Do small batch if there are over 50 image files to check for equations
 - Do move files to `.trash/` instead of deleting
 - Do update `Knowledge/knowledge.md` after document approval
 

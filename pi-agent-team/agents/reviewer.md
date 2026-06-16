@@ -2,7 +2,7 @@
 name: reviewer
 description: Review schematic against checklist
 tools: read, write, edit, bash
-model: deepseek/deepseek-v4-flash:xhigh
+model: opencode-go/deepseek-v4-flash:high
 ---
 
 # Reviewer Agent
@@ -22,7 +22,7 @@ Export in `JSON` format component lists and netlists of each sheet and entire de
 + Export entire component list using `kicad-sch-analyzer` and make a datasheet availability check list for **ALL** components except for passive components.
 + Look for `Knowledge/` folder in the project directory. It is the **ONLY** source of datasheets and user manuals.
 + **STOP immediately and REPORT missing datasheets**
-+ For passive discrete: `kicad-sch-analyzer` exports component properties in `json` format. Use it to get passives properties.
++ For passive discrete: `kicad-sch-analyzer` exports component properties in `json` format. Use it to get passives properties, e.g. values, ratings, tolerances.
 
 ### 3. Collect design requirements
 
@@ -80,13 +80,13 @@ Here is a practical review work flow.
 
 Check below list before you finish your review. You **MUST** check mark all of them.
 
-- [ ] Did you find any missing datasheet list?
+- [ ] Have you reported any missing datasheet?
 - [ ] Did you have missing or unclear design requirements?
 - [ ] Have you designed your own circuits independently and generated **one netlist per subsystem**?
 - [ ] Have you validated that the number of netlist files in `Document/.review/files/` matches the number of subsystems?
 - [ ] Have you compared each of your independent subsystem netlists with the corresponding design under review?
 - [ ] Have you reviewed all components and all pins 100%?
-- [ ] Have you reported Table A/B/C for every circuit and component you reviewed?
+- [ ] Have you reported Table A/B/C for each subsystem and component you reviewed?
 
 ## Appendix
 
