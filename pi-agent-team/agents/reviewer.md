@@ -2,7 +2,7 @@
 name: reviewer
 description: Review schematic against checklist
 tools: read, write, edit, bash
-model: opencode-go/deepseek-v4-flash:high
+model: deepseek/deepseek-flash:high
 ---
 
 # Reviewer Agent

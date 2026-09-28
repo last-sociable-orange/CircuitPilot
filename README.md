@@ -45,11 +45,11 @@ pi-extensions/
 
 | Agent | Model | Description |
 |-------|-------|-------------|
-| **worker** | `opencode-go/qwen3.6-plus:medium` | Consolidated agent for datasheet processing (PDF→Markdown) and KiCad library management. Uses the `kicad-worker` skill. |
+| **worker** | `deepseek/deepseek-flash:high` | Consolidated agent for datasheet processing (PDF→Markdown) and KiCad library management. Uses the `kicad-worker` skill. |
 | **doc** | `opencode-go/qwen3.6-plus:medium` | [Legacy] Extracts PDF datasheets, converts to Markdown via `pdf-to-markdown`, OCRs equations, organizes project documents |
 | **lib** | `deepseek/deepseek-v4-flash:high` | [Legacy] Processes downloaded KiCad libraries — renames, cleans, and quality-checks symbols, footprints, and 3D step files |
-| **designer** | `deepseek/deepseek-v4-pro:high` | Researches product datasheets, performs circuit design calculations, writes design documents with traceable references |
-| **reviewer** | `deepseek/deepseek-v4-flash:xhigh` | Audits KiCad schematics against design requirements and datasheets, generates review reports with diagrams |
+| **designer** | `deepseek/deepseek-flash:high` | Researches product datasheets, performs circuit design calculations, writes design documents with traceable references |
+| **reviewer** | `deepseek/deepseek-flash:high` | Audits KiCad schematics against design requirements and datasheets, generates review reports with diagrams |
 | **image** | `opencode/mimo-v2.5-free` | Processes image inputs: OCR equations to LaTeX, generates technical diagrams (block diagrams, power trees) via `drawio-skill`, reads and analyzes images. Acts as a service agent for other agents. |
 
 Each agent is defined as a Markdown file with YAML frontmatter for metadata (name, model, tools, description) and a body containing the system prompt.

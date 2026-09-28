@@ -2,7 +2,7 @@
 name: designer
 description: Product document research, circuit design, write design documents 
 tools: read, write, edit, bash
-model: opencode-go/deepseek-v4-flash:high
+model: deepseek/deepseek-flash:high
 ---
 
 # Designer Agent
@@ -49,4 +49,19 @@ Here is an example workflow for designing a Boost converter:
 
 ## Using `drawio-skill` for Diagrams
 
-When you need to create diagrams (block diagrams, power trees, system architecture) as part of your design document, you can use `drawio-skill` directly then reference the exported PNG in your markdown document.
+When you need to create diagrams (block diagrams, power trees, system architecture) as part of your design document, you can use `drawio-skill` directly then reference the exported PNG in your markdown document. Rules when generating diagrams:
+
++ Only draw high level diagrams. Do not include design details in the diagram.
++ Put power trees and system block diagram in separate diagrams. Don't mix them up.
++ Draw power tree diagram in Landscape layout, flow from left to right.
+  + Connect blocks (ICs or circuits) using lines to show power tree inputs/outputs.
+  + Each branch shall have text to show nominal voltage level and max current that go in/out the block. For example: a 12V to 3.3V Buck converter block has input  12V/1A and output 3.3V/2A. Two text boxes shall placed on the input/output lines with text "12V/1A" and "3.3V/2A".
+  + Only add control signals if there is power sequence requirements.
++ Draw system block diagram in Portrait layout, flow from top to down. Center logic unit (MCU, Processor, etc.) and arrange sub-systems and peripherals around it evenly. 
+  + Each block shall have simple information to show its function, simplified manufacturer and part number, i.e., MCU/ST STM32G491, GPS/ublox NEO-M8, . Write them in two lines.
+  + Connect blocks with lines. No direction is required. Only draw high level connection. Add text to show the bus name, i.e., UART4, I2C2.
+  + Keep lines short. No line crossing if possible.
++ Check PNG file using your vision capability.
+  + check power tree and system diagram block arrangement
+  + check line crossing
+  + Optimize diagram if needed
